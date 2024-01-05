@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Carros;
 
+
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
+
 class CarrosController extends Controller
 {
     /**
@@ -17,12 +22,13 @@ class CarrosController extends Controller
         return $cars;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // Crear la authenticacion
+    public function create(Request $request)
     {
-        //
+        // 
+
+       
+        
     }
 
     /**
@@ -40,7 +46,7 @@ class CarrosController extends Controller
 
         $carro->save();
 
-        return $carro;
+        return response()->json($carro);
 
     }
 
