@@ -7,15 +7,31 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Illuminate\Support\Facades\Hash;
 
 class UsuariosController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function register( Request $request )
     {
-        //
+        // Registra un usuario
+
+        $request->validate([
+            "name" => "required",
+            "email" => 'required|email|unique:users',
+            'password'=> 'required|confirmed',
+        ]);
+
+        $user = new User();
+        $user->email = $request->email; //remember_token
+        $user->name = $request->name; //
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response($user);
+
     }
 
     /**
@@ -30,8 +46,10 @@ class UsuariosController extends Controller
         
         if(Auth::attempt($credentials)){
 
-            // Si existe el usuario consulta sus datos en la BD
-            $user = User::where('email', $credentials['email'])->first();
+
+            // Si existe el usuario consulta sus datos en la BD para generar el token con id
+            $user = Auth::user();
+            // $user = User::where('email', $credentials['email'])->first();
             
             
             // Si los datos con correctos retorna el JWT
@@ -48,6 +66,8 @@ class UsuariosController extends Controller
             // genera el JWT
             $jwt = JWT::encode($payload, $key, 'HS256');
 
+
+            
 
             return response()->json(['token' => $jwt]);
 
@@ -74,11 +94,13 @@ class UsuariosController extends Controller
     {
         // CONSULTA LOS DATOS DEL PERFIL DEL USUARIO
         // Si existe el usuario consulta sus datos en la BD
+
     
         $token = $request->header('authorization');
         $arreglo_token = explode(" ", $token);
        
         $key = 'palabra_secreta';
+
         $tokenId = JWT::decode($arreglo_token[1], new Key($key, 'HS256'));
         $id = $tokenId->data;
         $user = User::where('id', $id)->first();

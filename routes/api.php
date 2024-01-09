@@ -12,6 +12,8 @@ use App\Http\Controllers\CarrosController;
     Route::get("/carros", [CarrosController::class, "index"]);
     // todo: Autenticacion
     Route::post("/auth",  [UsuariosController::class, "create"]);
+    // todo: Registro de usuario
+    Route::post("/registro",  [UsuariosController::class, "register"]);
 
 
     //! RUTAS PRIVADAS
